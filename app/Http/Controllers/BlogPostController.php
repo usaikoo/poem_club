@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlogPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -9,9 +10,9 @@ use Inertia\Inertia;
 class BlogPostController extends Controller
 {
    public function index()  {
-        $name = "go coding";
+        $blogPosts = BlogPost::with('user')->latest()->paginate(3);
         return Inertia::render('Blog/Index',[
-            'name' => $name
+            'blogPosts' => $blogPosts
         ]);
     }
 
