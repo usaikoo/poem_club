@@ -33,6 +33,17 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+
+
+            
+
+                // //if  ? :
+                // //else
+                'favorites' =>$request->user() 
+                ? 
+                $request->user()->favorites->pluck('blog_post_id')->toArray()
+                :
+                [],
             ],
             'flash' => [
                 'status' => session('status')

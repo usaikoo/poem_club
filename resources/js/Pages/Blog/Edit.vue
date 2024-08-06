@@ -13,15 +13,23 @@ import { ElMessage } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
 import type { DrawerProps } from 'element-plus'
 import { router } from '@inertiajs/vue3'
-import { FormData } from '@/types/types';
+import { BlogPost, FormData } from '@/types/types';
+const props = defineProps<{
+    content: string // received from generated ai content 
+    blogPost: BlogPost
+}>();
 
 // Initial file list with one image for demonstration
 const fileList = ref<UploadUserFile[]>([
-
+    {
+        name: '',
+        url: `/storage/${props.blogPost.image}`
+}
 ]);
 
-const dialogImageUrl = ref('');
-const dialogVisible = ref(false);
+
+const dialogImageUrl = ref<string>(`/storage/${props.blogPost.image}`);
+const dialogVisible = ref<boolean>(false);
 
 // Function to handle removing images from the UI
 const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
@@ -39,12 +47,14 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
 
 // Form data with type annotations
 
+// interface for blog post
+
 
 
 //Initialize from data with correct types
 const form = useForm<FormData>({
-    title: '',
-    content: '',
+    title: props.blogPost.title,
+    content: props.blogPost.content,
     image: null,
 })
 
@@ -61,7 +71,7 @@ const handleFileChange = (file: UploadUserFile) => {
 // submit form 
 
 const submit = () => {
-    form.post('/blog')
+    form.post(`/blog/${props.blogPost.id}`)
 }
 //drawer 
 const drawer = ref(false)
@@ -81,11 +91,9 @@ const handleClose = (done: () => void) => {
 const content = ref<string>('');
 const isGenerating = ref<boolean>(false)
 
-const props = defineProps<{
-    content: string // received from generated ai content 
-}>();
 
-form.content = props.content || '';
+
+form.content = props.content || props.blogPost.content;
 
 
 //generate poem function 
@@ -101,10 +109,10 @@ const generatePeom = () => {
     router.visit('/blog/create', {
         method: 'post',
         data: { prompt: content.value },
-        onSuccess: page => { 
+        onSuccess: page => {
             ElMessage({
                 message: "Poem generated successfully",
-                type:'success'
+                type: 'success'
             })
         },
     })
@@ -176,7 +184,7 @@ const generatePeom = () => {
                             <div class="p-2 w-full">
                                 <button
                                     class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-                                    Save
+                                    Update
                                 </button>
                             </div>
                         </div>
