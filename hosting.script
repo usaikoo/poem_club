@@ -31,6 +31,8 @@ sudo apt install php8.2-sqlite3
 
 
 
+
+
 sudo apt install mariadb-server 
 sudo mysql_secure_installation
 Remove anonymous users? [Y/n] y
